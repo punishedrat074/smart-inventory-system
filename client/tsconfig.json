@@ -1,0 +1,61 @@
+{
+  "compilerOptions": {
+    // ─── Target & Module ─────────────────────────────────────────────────────
+    // ESNext gives us the latest JS features — Vite handles downleveling for
+    // browser compatibility via esbuild.
+    "target": "ES2022",
+    // ESNext modules: Vite imports/transforms ES modules natively. Using
+    // CommonJS here would break Vite's module graph.
+    "module": "ESNext",
+    // "Bundler" is a TypeScript 5+ resolver designed for bundler environments
+    // (Vite, webpack, esbuild). It knows that `import './App'` resolves to
+    // `./App.tsx` because the bundler handles extension resolution — NOT Node.
+    "moduleResolution": "Bundler",
+    // Required when moduleResolution is "Bundler" — allows importing files
+    // with their .ts/.tsx extensions explicitly if needed.
+    "allowImportingTsExtensions": true,
+    // Tells TypeScript to check types but not emit JS files.
+    // Vite handles all transpilation — tsc is used only for `npm run typecheck`.
+    "noEmit": true,
+    // Enables the automatic JSX runtime — no need for `import React from 'react'`
+    // in every component file. React 17+ feature, required for React 18.
+    "jsx": "react-jsx",
+    // Include browser DOM types (document, window, etc.) alongside ES2022.
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+
+    // ─── Path Aliases ─────────────────────────────────────────────────────────
+    // Configures `@/` as an alias for `./src/`. Must match vite.config.ts.
+    // Use: import { Button } from '@/components/ui/button'
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+
+    // ─── Strict Type Checking ─────────────────────────────────────────────────
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+
+    // ─── Vite / esbuild Compatibility ────────────────────────────────────────
+    // CRITICAL for Vite: esbuild transpiles each file in isolation without full
+    // type resolution. This flag catches patterns that break isolated transpilation:
+    // - `export { MyType }` must be `export type { MyType }` (esbuild can't tell
+    //   if it's a type or value without reading other files)
+    // - `const enum` is not supported in isolated mode
+    "isolatedModules": true,
+    // Use ES2022 class fields semantics (define vs assign). Required when
+    // target is ES2022+ to match runtime behavior.
+    "useDefineForClassFields": true,
+
+    // ─── Interop ─────────────────────────────────────────────────────────────
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
+  },
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}

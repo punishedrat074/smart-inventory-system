@@ -1,0 +1,46 @@
+/*
+ * index.css — Global stylesheet entry point
+ *
+ * Current state: minimal reset only.
+ *
+ * In Task 21, this file will be expanded to include:
+ *   - Tailwind CSS directives (@tailwind base, components, utilities)
+ *   - CSS custom properties for the design system (colors, radius, spacing)
+ *   - Dark mode variables (:root and .dark class)
+ *   - Font imports (Inter, JetBrains Mono)
+ *
+ * Do not add feature-specific styles here. Component styles belong in
+ * component files (via Tailwind utilities) or shadcn/ui CSS variables.
+ */
+
+/* ─── Box Model Reset ──────────────────────────────────────────────────────── */
+/*
+ * Border-box sizing means width/height include padding and border.
+ * This is the foundation of every modern CSS reset — without it, padding
+ * adds to element dimensions in unexpected ways.
+ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* ─── Root Defaults ────────────────────────────────────────────────────────── */
+html {
+  /* Prevents font size from scaling with browser zoom on iOS Safari */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  /* System font stack — replaced by Inter (Task 21) once Tailwind is configured */
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  /* Improves font rendering on macOS/iOS */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

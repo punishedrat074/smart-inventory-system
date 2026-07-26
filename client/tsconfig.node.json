@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    // composite: true enables project references — required for tsconfig.json
+    // to reference this file via "references": [{ "path": "./tsconfig.node.json" }].
+    "composite": true,
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "allowSyntheticDefaultImports": true,
+    "strict": true
+  },
+  // Only the Vite config itself — nothing in src/ should be included here.
+  "include": ["vite.config.ts"]
+}
