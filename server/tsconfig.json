@@ -1,0 +1,55 @@
+{
+  "compilerOptions": {
+    // ─── Target & Module ─────────────────────────────────────────────────────
+    // ES2022 gives us top-level await, Error.cause, and Object.hasOwn —
+    // all available in Node 20+. CommonJS is the standard module format
+    // for Node.js servers; ESM in Node.js adds complexity without benefit here.
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "lib": ["ES2022"],
+
+    // ─── Paths ───────────────────────────────────────────────────────────────
+    // rootDir must match your source; outDir is where tsc writes compiled JS.
+    "rootDir": "src",
+    "outDir": "dist",
+
+    // ─── Strict Type Checking ─────────────────────────────────────────────
+    // "strict" enables: strictNullChecks, noImplicitAny, strictFunctionTypes,
+    // strictBindCallApply, strictPropertyInitialization, noImplicitThis,
+    // alwaysStrict. These are non-negotiable for production code.
+    "strict": true,
+    // Catch dead local variables at compile time (no silent unused code).
+    "noUnusedLocals": true,
+    // Catch unused function parameters — forces intentional design.
+    "noUnusedParameters": true,
+    // Every code path in a function must return a value.
+    "noImplicitReturns": true,
+    // Prevent accidental fall-through between switch cases.
+    "noFallthroughCasesInSwitch": true,
+
+    // ─── Interop ─────────────────────────────────────────────────────────────
+    // esModuleInterop allows `import express from 'express'` instead of
+    // `import * as express from 'express'` — the standard in modern TS.
+    "esModuleInterop": true,
+    // Allows `import data from './data.json'` with full type inference.
+    "resolveJsonModule": true,
+    // Prevents bugs when code moves between case-sensitive (Linux) and
+    // case-insensitive (macOS, Windows) file systems.
+    "forceConsistentCasingInFileNames": true,
+    // Speeds up compilation by skipping type-checking of .d.ts files in
+    // node_modules. Safe because library authors are responsible for their types.
+    "skipLibCheck": true,
+
+    // ─── Output ──────────────────────────────────────────────────────────────
+    // Source maps map compiled JS back to TS lines — essential for readable
+    // stack traces in production errors and debugger step-through.
+    "sourceMap": true,
+    // Declaration files (.d.ts) allow other packages in the monorepo to
+    // consume this package's types if needed in the future.
+    "declaration": true,
+    "declarationMap": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
