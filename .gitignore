@@ -1,1 +1,54 @@
+# ─── OS ──────────────────────────────────────────────────────────────────────
 .DS_Store
+Thumbs.db
+
+# ─── Dependencies ─────────────────────────────────────────────────────────────
+node_modules/
+.npm
+
+# ─── Build Artifacts ──────────────────────────────────────────────────────────
+dist/
+build/
+out/
+.next/
+
+# ─── Environment Variables ────────────────────────────────────────────────────
+# Never commit real secrets. Only .env.example files should be committed.
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ─── Prisma ───────────────────────────────────────────────────────────────────
+# Prisma generates client files — these are built, not source
+server/node_modules/.prisma/
+
+# ─── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs/
+
+# ─── TypeScript ───────────────────────────────────────────────────────────────
+*.tsbuildinfo
+
+# ─── Vite ─────────────────────────────────────────────────────────────────────
+# Vite's cache is local and safe to ignore
+.vite/
+
+# ─── Editor / IDE ─────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ─── Testing ──────────────────────────────────────────────────────────────────
+coverage/
+.nyc_output/
+
+# ─── Misc ─────────────────────────────────────────────────────────────────────
+.cache/
+tmp/

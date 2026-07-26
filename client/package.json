@@ -1,0 +1,6 @@
+{
+  "name": "@sims/client",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Smart Inventory Management System — React frontend"
+}

@@ -1,0 +1,27 @@
+{
+  "name": "smart-inventory-system",
+  "version": "0.0.1",
+  "private": true,
+  "description": "A full-stack Smart Inventory Management System built as a SaaS portfolio project.",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=client & npm run dev --workspace=server",
+    "dev:client": "npm run dev --workspace=client",
+    "dev:server": "npm run dev --workspace=server",
+    "build": "npm run build --workspaces",
+    "build:client": "npm run build --workspace=client",
+    "build:server": "npm run build --workspace=server",
+    "lint": "npm run lint --workspaces --if-present",
+    "lint:client": "npm run lint --workspace=client",
+    "lint:server": "npm run lint --workspace=server",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "clean": "rm -rf client/node_modules server/node_modules client/dist server/dist"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  }
+}

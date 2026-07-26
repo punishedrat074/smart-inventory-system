@@ -1,0 +1,6 @@
+{
+  "name": "@sims/server",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Smart Inventory Management System — Express backend"
+}
