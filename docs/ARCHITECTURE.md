@@ -1,7 +1,7 @@
 # SIMS — Architecture Reference
 
-> **Version:** 1.1
-> **Last Updated:** Task 04 (ESLint + Prettier + Husky configured)
+> **Version:** 1.2
+> **Last Updated:** Task 05 (Environment configuration and PostgreSQL setup)
 > **Maintainer:** Update this document after every task that changes architecture, adds a new pattern, or introduces a new dependency.
 
 ---
@@ -818,7 +818,33 @@ Never commit: `.env`, `node_modules/`, `dist/`, `*.log`, `.DS_Store`
 | `client/.env`         | ❌ No     | Local dev client config (`VITE_API_URL`)                     |
 | `client/.env.example` | ✅ Yes    | Template for all `VITE_*` variables                          |
 
-Server variables are Zod-validated at startup in `config/env.ts`. Invalid or missing variables cause an immediate process exit with a clear error message — fail fast, fail loudly.
+**Complete server environment variable reference** (as defined in `server/.env.example`):
+
+| Variable                 | Required | Default                 | Introduced |
+| ------------------------ | -------- | ----------------------- | ---------- |
+| `NODE_ENV`               | Yes      | `development`           | Task 02    |
+| `PORT`                   | Yes      | `5000`                  | Task 02    |
+| `HOST`                   | Yes      | `0.0.0.0`               | Task 02    |
+| `DATABASE_URL`           | Yes      | —                       | Task 05    |
+| `JWT_ACCESS_SECRET`      | Yes      | —                       | Task 15    |
+| `JWT_ACCESS_EXPIRES_IN`  | Yes      | `15m`                   | Task 15    |
+| `JWT_REFRESH_SECRET`     | Yes      | —                       | Task 15    |
+| `JWT_REFRESH_EXPIRES_IN` | Yes      | `7d`                    | Task 15    |
+| `CLIENT_URL`             | Yes      | `http://localhost:5173` | Task 10    |
+
+**DATABASE_URL formats:**
+
+```
+# Local PostgreSQL (Homebrew / Postgres.app)
+DATABASE_URL=postgresql://USERNAME:PASSWORD@localhost:5432/sims_dev
+
+# Neon (free tier cloud PostgreSQL)
+DATABASE_URL=postgresql://USERNAME:PASSWORD@ep-XXXX.REGION.aws.neon.tech/sims_dev?sslmode=require
+```
+
+Server variables are Zod-validated at startup in `config/env.ts` (Task 09).
+Invalid or missing variables cause an immediate process exit with a clear error
+message — fail fast, fail loudly.
 
 ### 8.7 Error Handling Rules
 
@@ -883,5 +909,5 @@ must fix it manually before committing.
 
 ---
 
-_Last updated after: **Task 04** — ESLint + Prettier + Husky configured_
-_Next update due after: **Task 05** — PostgreSQL connection setup_
+_Last updated after: **Task 05** — Environment configuration and PostgreSQL setup_
+_Next update due after: **Task 06** — Prisma ORM installation_
