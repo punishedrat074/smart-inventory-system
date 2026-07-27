@@ -1,7 +1,7 @@
 # SIMS — Architecture Reference
 
-> **Version:** 1.0
-> **Last Updated:** Task 03 (Scaffold complete)
+> **Version:** 1.1
+> **Last Updated:** Task 04 (ESLint + Prettier + Husky configured)
 > **Maintainer:** Update this document after every task that changes architecture, adds a new pattern, or introduces a new dependency.
 
 ---
@@ -51,11 +51,11 @@ SIMS is a full-stack monorepo composed of two independent packages — `client` 
 
 ### Ports
 
-| Service | Port | Notes |
-|---------|------|-------|
-| Vite dev server | `5173` | Client — only runs in development |
-| Express API | `5000` | Server — runs in both dev and production |
-| PostgreSQL | `5432` | Database — local or cloud |
+| Service         | Port   | Notes                                    |
+| --------------- | ------ | ---------------------------------------- |
+| Vite dev server | `5173` | Client — only runs in development        |
+| Express API     | `5000` | Server — runs in both dev and production |
+| PostgreSQL      | `5432` | Database — local or cloud                |
 
 ### Monorepo Root
 
@@ -82,11 +82,13 @@ server/src/
 ```
 
 **`app.ts`** creates and exports the Express `Application` object. It:
+
 - Has no side effects (no network binding, no file I/O)
 - Can be `import`ed in integration tests without starting a real server
 - Registers all middleware and routes
 
 **`server.ts`** is the only file that touches the OS:
+
 - Calls `app.listen()` to bind to the configured port
 - Handles `SIGTERM` and `SIGINT` for graceful shutdown
 - Catches `unhandledRejection` and `uncaughtException` — fails loudly, never silently
@@ -146,12 +148,12 @@ Response
 
 All errors bubble up to a single global error middleware. Four error classes are handled:
 
-| Error Type | Status | Example |
-|-----------|--------|---------|
-| `ZodError` | 400 | Missing required field, invalid email |
-| `AppError` | varies | "Product not found" (404), "Insufficient stock" (422) |
-| `PrismaClientKnownRequestError` | varies | Unique constraint violation (409) |
-| Unknown | 500 | Unhandled exceptions — message hidden from client |
+| Error Type                      | Status | Example                                               |
+| ------------------------------- | ------ | ----------------------------------------------------- |
+| `ZodError`                      | 400    | Missing required field, invalid email                 |
+| `AppError`                      | varies | "Product not found" (404), "Insufficient stock" (422) |
+| `PrismaClientKnownRequestError` | varies | Unique constraint violation (409)                     |
+| Unknown                         | 500    | Unhandled exceptions — message hidden from client     |
 
 ### 2.5 API Response Envelope
 
@@ -195,19 +197,19 @@ All responses use a consistent JSON shape:
 
 ### 3.1 Technology Stack
 
-| Concern | Library | Task |
-|---------|---------|------|
-| UI framework | React 18 | Task 03 ✅ |
-| Build tool | Vite | Task 03 ✅ |
-| Styling | Tailwind CSS | Task 21 |
-| Component library | shadcn/ui | Task 22 |
-| HTTP client | Axios | Task 23 |
-| Server state | TanStack Query | Task 24 |
-| Client state | Zustand | Task 25 |
-| Routing | React Router v6 | Task 27 |
-| Forms | React Hook Form + Zod | Task 26+ |
-| Charts | Recharts | Task 35 |
-| Animation | Framer Motion (optional) | Task 28+ |
+| Concern           | Library                  | Task       |
+| ----------------- | ------------------------ | ---------- |
+| UI framework      | React 18                 | Task 03 ✅ |
+| Build tool        | Vite                     | Task 03 ✅ |
+| Styling           | Tailwind CSS             | Task 21    |
+| Component library | shadcn/ui                | Task 22    |
+| HTTP client       | Axios                    | Task 23    |
+| Server state      | TanStack Query           | Task 24    |
+| Client state      | Zustand                  | Task 25    |
+| Routing           | React Router v6          | Task 27    |
+| Forms             | React Hook Form + Zod    | Task 26+   |
+| Charts            | Recharts                 | Task 35    |
+| Animation         | Framer Motion (optional) | Task 28+   |
 
 ### 3.2 Component Hierarchy
 
@@ -271,6 +273,7 @@ Page Component (e.g., ProductsPage)
 ```
 
 **Zustand is used only for:**
+
 - `authStore` — current user, access token, isAuthenticated
 - `themeStore` — light/dark/system preference (persisted to localStorage)
 
@@ -535,12 +538,13 @@ Reverse Proxy (Nginx / Railway / Render)
 
 SIMS uses a **dual-token pattern**:
 
-| Token | Storage | Lifetime | Purpose |
-|-------|---------|---------|---------|
-| Access token | Memory (Zustand `authStore`) | 15 minutes | Authenticates every API request |
-| Refresh token | HTTP-only cookie | 7 days | Silently issues new access tokens |
+| Token         | Storage                      | Lifetime   | Purpose                           |
+| ------------- | ---------------------------- | ---------- | --------------------------------- |
+| Access token  | Memory (Zustand `authStore`) | 15 minutes | Authenticates every API request   |
+| Refresh token | HTTP-only cookie             | 7 days     | Silently issues new access tokens |
 
 **Why this split?**
+
 - Access tokens in memory cannot be stolen by XSS — JavaScript cannot read memory between page loads.
 - Refresh tokens in HTTP-only cookies are invisible to JavaScript entirely — the browser sends them automatically but they cannot be read or exfiltrated by scripts.
 
@@ -588,20 +592,22 @@ SIMS uses a **dual-token pattern**:
 ### 6.4 Role-Based Access Control (RBAC)
 
 **Backend (per route):**
+
 ```typescript
 router.delete('/:id', authenticate, authorizeRoles('ADMIN'), deleteProduct);
 ```
 
 **Frontend (per component):**
+
 ```typescript
 const { canDelete } = usePermissions();
 // or
 <CanAccess role="ADMIN"><DeleteButton /></CanAccess>
 ```
 
-| Role | What they can do |
-|------|----------------|
-| `ADMIN` | Everything — user management, delete operations, category management, full audit logs |
+| Role       | What they can do                                                                                |
+| ---------- | ----------------------------------------------------------------------------------------------- |
+| `ADMIN`    | Everything — user management, delete operations, category management, full audit logs           |
 | `EMPLOYEE` | Day-to-day work — view all, create/update products/suppliers/purchases/sales, generate invoices |
 
 ### 6.5 Logout
@@ -626,10 +632,10 @@ const { canDelete } = usePermissions();
 
 ### 7.1 Technology
 
-| Tool | Role |
-|------|------|
-| **PostgreSQL** | Relational database — ACID guarantees, foreign key integrity |
-| **Prisma ORM** | Type-safe query builder, schema-as-code, migration management |
+| Tool              | Role                                                                 |
+| ----------------- | -------------------------------------------------------------------- |
+| **PostgreSQL**    | Relational database — ACID guarantees, foreign key integrity         |
+| **Prisma ORM**    | Type-safe query builder, schema-as-code, migration management        |
 | **Prisma Client** | Auto-generated TypeScript client (singleton in `config/database.ts`) |
 
 ### 7.2 Entity Relationship Overview
@@ -646,24 +652,25 @@ User ─────────────────────────
 
 ### 7.3 Core Models Summary
 
-| Model | Key Fields | Notes |
-|-------|-----------|-------|
-| `User` | id, email, passwordHash, role, isActive | `role`: ADMIN \| EMPLOYEE |
-| `Category` | id, name, description | Admin-managed |
-| `Supplier` | id, name, contactPerson, email, isActive | Soft delete via `isActive` |
-| `Product` | id, sku, name, quantity, reorderLevel, costPrice, unitPrice | Central stock entity |
-| `Purchase` | id, purchaseNumber, status, supplierId | `PO-YYYY-NNNN`, status: DRAFT→ORDERED→RECEIVED→CANCELLED |
-| `PurchaseItem` | purchaseId, productId, quantity, unitCost, subtotal | Line items |
-| `Sale` | id, saleNumber, status, totalAmount, completedAt | `INV-YYYY-NNNN`, status: DRAFT→COMPLETED→CANCELLED |
-| `SaleItem` | saleId, productId, quantity, unitPrice, subtotal | Line items |
-| `ActivityLog` | userId, action, entityType, entityId, metadata | Full audit trail |
-| `RefreshToken` | userId, token (hashed), expiresAt | Enables server-side logout/revocation |
+| Model          | Key Fields                                                  | Notes                                                    |
+| -------------- | ----------------------------------------------------------- | -------------------------------------------------------- |
+| `User`         | id, email, passwordHash, role, isActive                     | `role`: ADMIN \| EMPLOYEE                                |
+| `Category`     | id, name, description                                       | Admin-managed                                            |
+| `Supplier`     | id, name, contactPerson, email, isActive                    | Soft delete via `isActive`                               |
+| `Product`      | id, sku, name, quantity, reorderLevel, costPrice, unitPrice | Central stock entity                                     |
+| `Purchase`     | id, purchaseNumber, status, supplierId                      | `PO-YYYY-NNNN`, status: DRAFT→ORDERED→RECEIVED→CANCELLED |
+| `PurchaseItem` | purchaseId, productId, quantity, unitCost, subtotal         | Line items                                               |
+| `Sale`         | id, saleNumber, status, totalAmount, completedAt            | `INV-YYYY-NNNN`, status: DRAFT→COMPLETED→CANCELLED       |
+| `SaleItem`     | saleId, productId, quantity, unitPrice, subtotal            | Line items                                               |
+| `ActivityLog`  | userId, action, entityType, entityId, metadata              | Full audit trail                                         |
+| `RefreshToken` | userId, token (hashed), expiresAt                           | Enables server-side logout/revocation                    |
 
 ### 7.4 Critical Stock Rules
 
 **Stock quantity is never set arbitrarily.** It changes in exactly two ways:
 
 1. **Purchase → RECEIVED:**
+
    ```
    prisma.$transaction([
      ...items.map(item =>
@@ -699,16 +706,16 @@ Both use `prisma.$transaction()` — all items update atomically or none do.
 
 ### 7.6 Seed Data (for portfolio demo)
 
-| Entity | Count | Notes |
-|--------|-------|-------|
-| Admin users | 1 | `admin@demo.com` / `password123` |
-| Employee users | 2 | `employee@demo.com` |
-| Categories | 5 | Electronics, Clothing, Food, Office, Other |
-| Suppliers | 10 | Mix of active/inactive |
-| Products | 50 | Mix of in-stock, low-stock, out-of-stock |
-| Purchases | 20 | Various statuses for UI testing |
-| Sales | 30 | Last 90 days — powers dashboard charts |
-| Activity logs | 100 | Variety of action types |
+| Entity         | Count | Notes                                      |
+| -------------- | ----- | ------------------------------------------ |
+| Admin users    | 1     | `admin@demo.com` / `password123`           |
+| Employee users | 2     | `employee@demo.com`                        |
+| Categories     | 5     | Electronics, Clothing, Food, Office, Other |
+| Suppliers      | 10    | Mix of active/inactive                     |
+| Products       | 50    | Mix of in-stock, low-stock, out-of-stock   |
+| Purchases      | 20    | Various statuses for UI testing            |
+| Sales          | 30    | Last 90 days — powers dashboard charts     |
+| Activity logs  | 100   | Variety of action types                    |
 
 ---
 
@@ -716,19 +723,19 @@ Both use `prisma.$transaction()` — all items update atomically or none do.
 
 ### 8.1 Naming
 
-| Item | Convention | Example |
-|------|-----------|---------|
-| Server files | `domain.type.ts` | `products.service.ts` |
-| React components | `PascalCase.tsx` | `ProductForm.tsx` |
-| Hooks | `useNoun.ts` | `useDebounce.ts` |
-| Zustand stores | `nounStore.ts` | `authStore.ts` |
-| API modules | `noun.api.ts` | `products.api.ts` |
-| TypeScript types/interfaces | `PascalCase` (no `I` prefix) | `ProductFilters`, `ApiResponse` |
-| Environment variables | `SCREAMING_SNAKE_CASE` | `DATABASE_URL` |
-| Client env variables | `VITE_` prefix | `VITE_API_URL` |
-| Prisma models | `PascalCase` | `Product` |
-| Database columns | `snake_case` (mapped by Prisma) | `created_at` |
-| CSS custom properties | `--kebab-case` | `--color-primary` |
+| Item                        | Convention                      | Example                         |
+| --------------------------- | ------------------------------- | ------------------------------- |
+| Server files                | `domain.type.ts`                | `products.service.ts`           |
+| React components            | `PascalCase.tsx`                | `ProductForm.tsx`               |
+| Hooks                       | `useNoun.ts`                    | `useDebounce.ts`                |
+| Zustand stores              | `nounStore.ts`                  | `authStore.ts`                  |
+| API modules                 | `noun.api.ts`                   | `products.api.ts`               |
+| TypeScript types/interfaces | `PascalCase` (no `I` prefix)    | `ProductFilters`, `ApiResponse` |
+| Environment variables       | `SCREAMING_SNAKE_CASE`          | `DATABASE_URL`                  |
+| Client env variables        | `VITE_` prefix                  | `VITE_API_URL`                  |
+| Prisma models               | `PascalCase`                    | `Product`                       |
+| Database columns            | `snake_case` (mapped by Prisma) | `created_at`                    |
+| CSS custom properties       | `--kebab-case`                  | `--color-primary`               |
 
 ### 8.2 Import Order
 
@@ -766,20 +773,21 @@ count++;
 ```
 
 Allowed exceptions:
+
 - `// ─── Section Name ──────────────` dividers for long files
 - JSDoc `/** ... */` on exported utility functions
 - `// TODO(task-XX):` for intentional scaffolding that will be replaced
 
 ### 8.4 TypeScript Rules
 
-| Rule | Rationale |
-|------|-----------|
-| No `any` — use `unknown` + narrowing | `any` silently disables all type checking |
-| `import type` for type-only imports | Signals intent; enables `isolatedModules` erasure |
-| `satisfies` for typed object literals | Catches type errors while preserving literal inference |
-| No non-null assertions (`!`) | Replace with proper null checks or throw descriptive errors |
-| No `process.env.X` inline | Use `config/env.ts` on server, `import.meta.env` on client |
-| No inline `as SomeType` casts | Cast only when TypeScript is wrong; add a comment explaining why |
+| Rule                                  | Rationale                                                        |
+| ------------------------------------- | ---------------------------------------------------------------- |
+| No `any` — use `unknown` + narrowing  | `any` silently disables all type checking                        |
+| `import type` for type-only imports   | Signals intent; enables `isolatedModules` erasure                |
+| `satisfies` for typed object literals | Catches type errors while preserving literal inference           |
+| No non-null assertions (`!`)          | Replace with proper null checks or throw descriptive errors      |
+| No `process.env.X` inline             | Use `config/env.ts` on server, `import.meta.env` on client       |
+| No inline `as SomeType` casts         | Cast only when TypeScript is wrong; add a comment explaining why |
 
 ### 8.5 Git Workflow
 
@@ -803,28 +811,77 @@ Never commit: `.env`, `node_modules/`, `dist/`, `*.log`, `.DS_Store`
 
 ### 8.6 Environment Variables
 
-| File | Committed | Purpose |
-|------|-----------|---------|
-| `server/.env` | ❌ No | Local dev secrets (DATABASE_URL, JWT secrets) |
-| `server/.env.example` | ✅ Yes | Template — shows all required keys with empty/example values |
-| `client/.env` | ❌ No | Local dev client config (`VITE_API_URL`) |
-| `client/.env.example` | ✅ Yes | Template for all `VITE_*` variables |
+| File                  | Committed | Purpose                                                      |
+| --------------------- | --------- | ------------------------------------------------------------ |
+| `server/.env`         | ❌ No     | Local dev secrets (DATABASE_URL, JWT secrets)                |
+| `server/.env.example` | ✅ Yes    | Template — shows all required keys with empty/example values |
+| `client/.env`         | ❌ No     | Local dev client config (`VITE_API_URL`)                     |
+| `client/.env.example` | ✅ Yes    | Template for all `VITE_*` variables                          |
 
 Server variables are Zod-validated at startup in `config/env.ts`. Invalid or missing variables cause an immediate process exit with a clear error message — fail fast, fail loudly.
 
 ### 8.7 Error Handling Rules
 
 **Server:**
+
 - All errors propagate to the global error middleware — never swallow silently
 - Services throw `AppError` instances with a message, HTTP status code, and optional machine-readable `code`
 - 500 responses never expose internal details (stack traces, Prisma internals) to the client
 
 **Client:**
-- Every `useMutation` has `onSuccess` (toast: "Product created") and `onError` (toast: "Failed to create product")
+
+- Every `useMutation` has `onSuccess` (toast: "Product created") and `onError`
+  (toast: "Failed to create product")
 - Every data-fetching view has three states: loading skeleton, error state, data
 - No empty catch blocks anywhere
 
+### 8.8 Code Toolchain (Task 04)
+
+All tooling is installed at the **monorepo root** (`devDependencies` in root
+`package.json`). Both workspaces share one ESLint config, one Prettier config,
+and one set of Git hooks.
+
+| Tool        | Config File                | Purpose                                        |
+| ----------- | -------------------------- | ---------------------------------------------- |
+| ESLint 9    | `eslint.config.mjs` (root) | Static analysis — bugs, patterns, import order |
+| Prettier 3  | `.prettierrc` (root)       | Code formatting — style enforcement            |
+| Husky 9     | `.husky/pre-commit`        | Git hook runner — wires lint-staged on commit  |
+| lint-staged | `package.json#lint-staged` | Runs ESLint + Prettier only on staged files    |
+
+**ESLint flat config layer order** (later layers override earlier ones):
+
+1. Global ignores (`dist/`, `node_modules/`, etc.)
+2. `@eslint/js` recommended — base JS rules
+3. `typescript-eslint` recommended — TypeScript-aware rules (all `.ts/.tsx`)
+4. Import sort rules (`simple-import-sort`) — enforces §8.2 import order
+5. Server glob (`server/**/*.ts`) — Node globals
+6. Client glob (`client/**/*.{ts,tsx}`) — React rules + browser globals
+7. `eslint-config-prettier` — disables formatting rules that conflict with Prettier
+
+**Pre-commit flow:**
+
+```
+git commit
+  └── .husky/pre-commit
+        └── npx lint-staged
+              ├── **/*.{ts,tsx} → eslint --fix → prettier --write
+              ├── **/*.{js,mjs,cjs} → prettier --write
+              └── **/*.{json,md,css,yml,yaml} → prettier --write
+```
+
+If ESLint finds an **unfixable error**, the commit is blocked and the developer
+must fix it manually before committing.
+
+**Root scripts added:**
+
+| Script                 | Command                         |
+| ---------------------- | ------------------------------- |
+| `npm run lint`         | ESLint on both workspaces       |
+| `npm run lint:fix`     | ESLint --fix on both workspaces |
+| `npm run format`       | Prettier --write all files      |
+| `npm run format:check` | Prettier --check (CI)           |
+
 ---
 
-*Last updated after: **Task 03** — Client scaffold complete*
-*Next update due after: **Task 04** — ESLint + Prettier + Husky*
+_Last updated after: **Task 04** — ESLint + Prettier + Husky configured_
+_Next update due after: **Task 05** — PostgreSQL connection setup_

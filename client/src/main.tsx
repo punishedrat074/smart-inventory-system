@@ -1,7 +1,9 @@
+import '@/index.css';
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+
 import App from '@/App';
-import '@/index.css';
 
 // Locate the root DOM element declared in index.html.
 // We throw a descriptive error rather than passing null to createRoot(),

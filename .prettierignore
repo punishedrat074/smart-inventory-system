@@ -1,0 +1,18 @@
+# Build output — never format generated files
+dist/
+build/
+
+# Dependencies — Prettier would take forever and serve no purpose
+node_modules/
+
+# Lock files — managed by npm, formatting would create unnecessary diffs
+package-lock.json
+
+# Prisma — migrations are auto-generated SQL; formatting could break them
+server/prisma/migrations/
+
+# Coverage reports — auto-generated
+coverage/
+
+# Logs
+*.log

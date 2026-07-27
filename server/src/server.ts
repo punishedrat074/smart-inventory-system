@@ -4,6 +4,7 @@
 import 'dotenv/config';
 
 import http from 'http';
+
 import app from './app';
 
 // ─── Configuration ────────────────────────────────────────────────────────────
@@ -13,7 +14,9 @@ const rawPort = parseInt(process.env['PORT'] ?? '5000', 10);
 // Zod-validated config (Task 09) will make this guard unnecessary, but for now
 // this prevents a silent NaN that causes listen() to throw EINVAL at runtime.
 if (isNaN(rawPort) || rawPort < 1 || rawPort > 65535) {
-  console.error(`[server] Invalid PORT value: "${process.env['PORT']}". Must be a number between 1–65535.`);
+  console.error(
+    `[server] Invalid PORT value: "${process.env['PORT']}". Must be a number between 1–65535.`,
+  );
   process.exit(1);
 }
 

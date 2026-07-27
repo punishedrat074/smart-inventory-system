@@ -15,13 +15,43 @@
     "build:client": "npm run build --workspace=client",
     "build:server": "npm run build --workspace=server",
     "lint": "npm run lint --workspaces --if-present",
+    "lint:fix": "npm run lint:fix --workspaces --if-present",
     "lint:client": "npm run lint --workspace=client",
     "lint:server": "npm run lint --workspace=server",
+    "format": "prettier --write \"**/*.{ts,tsx,js,mjs,json,md,css,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,json,md,css,yml,yaml}\"",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "clean": "rm -rf client/node_modules server/node_modules client/dist server/dist"
+    "clean": "rm -rf client/node_modules server/node_modules client/dist server/dist",
+    "prepare": "husky"
   },
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=10.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "eslint": "^9.39.5",
+    "eslint-config-prettier": "^9.1.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.26",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "globals": "^15.15.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.2",
+    "prettier": "^3.9.6",
+    "typescript-eslint": "^8.65.0"
+  },
+  "lint-staged": {
+    "**/*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "**/*.{js,mjs,cjs}": [
+      "prettier --write"
+    ],
+    "**/*.{json,md,css,yml,yaml}": [
+      "prettier --write"
+    ]
   }
 }

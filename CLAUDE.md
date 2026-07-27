@@ -7,7 +7,9 @@
 
 \f0\fs24 \cf0 # Smart Inventory Management System\
 \
+
 ## Project Goal\
+
 \
 Build a production-quality Smart Inventory Management System that serves as a flagship portfolio project.\
 \
@@ -15,19 +17,24 @@ The application should be clean, scalable, maintainable, and resemble a real Saa
 \
 ---\
 \
+
 ## Before Every Task\
+
 \
 Always read:\
 \
+
 - PROJECT_PLAN.md\
 - TASKS.md\
 - FEATURES.md\
-\
-Follow them unless explicitly instructed otherwise.\
-\
----\
-\
+  \
+  Follow them unless explicitly instructed otherwise.\
+  \
+  ---\
+  \
+
 ## Development Rules\
+
 \
 Complete only ONE task at a time.\
 \
@@ -39,12 +46,15 @@ Stop after finishing the requested task.\
 \
 ---\
 \
+
 ## Code Quality\
+
 \
 Write production-quality code.\
 \
 Prioritize:\
 \
+
 - Readability\
 - Maintainability\
 - Scalability\
@@ -52,22 +62,25 @@ Prioritize:\
 - Clean folder structure\
 - Consistent naming\
 - Type safety\
-\
-Avoid unnecessary complexity.\
-\
----\
-\
+  \
+  Avoid unnecessary complexity.\
+  \
+  ---\
+  \
+
 ## UI Guidelines\
+
 \
 The design should resemble modern SaaS products such as:\
 \
+
 - Linear\
 - Vercel Dashboard\
 - Stripe Dashboard\
 - Clerk Dashboard\
-\
-Requirements:\
-\
+  \
+  Requirements:\
+  \
 - Minimalistic\
 - Professional\
 - Excellent spacing\
@@ -76,15 +89,18 @@ Requirements:\
 - Dark mode\
 - Accessible\
 - Smooth animations\
-\
-Avoid beginner-style dashboards.\
-\
----\
-\
+  \
+  Avoid beginner-style dashboards.\
+  \
+  ---\
+  \
+
 ## Technology Stack\
+
 \
 Frontend\
 \
+
 - React\
 - TypeScript\
 - Vite\
@@ -92,23 +108,25 @@ Frontend\
 - shadcn/ui\
 - TanStack Query\
 - Zustand\
-\
-Backend\
-\
+  \
+  Backend\
+  \
 - Node.js\
 - Express\
 - TypeScript\
 - PostgreSQL\
 - Prisma\
-\
-Authentication\
-\
+  \
+  Authentication\
+  \
 - JWT\
 - Refresh Tokens\
-\
----\
-\
+  \
+  ---\
+  \
+
 ## Current Decisions\
+
 \
 Docker is postponed until after MVP.\
 \
@@ -118,25 +136,31 @@ AI features will only be implemented after the entire inventory management syste
 \
 ---\
 \
+
 ## Git Workflow\
+
 \
 After every completed task:\
 \
+
 1. Explain what changed.\
 2. Explain why.\
 3. Tell me what to test.\
 4. Suggest a Git commit message.\
-\
-Never commit automatically.\
-\
----\
-\
+   \
+   Never commit automatically.\
+   \
+   ---\
+   \
+
 ## Explanations\
+
 \
 Whenever creating a new file:\
 \
+
 - Explain its purpose.\
 - Explain how it connects to the rest of the project.\
 - Keep explanations beginner-friendly.\
-\
-Assume I am learning while building.}
+  \
+  Assume I am learning while building.}
