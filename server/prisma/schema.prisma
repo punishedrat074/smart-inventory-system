@@ -1,0 +1,46 @@
+// ─── SIMS Prisma Schema ───────────────────────────────────────────────────────
+//
+// Smart Inventory Management System — database schema.
+// This file is the single source of truth for the database structure.
+//
+// Prisma 7 change: The database connection URL is no longer configured here.
+// It is now in server/prisma.config.ts (for CLI commands) and in
+// process.env.DATABASE_URL (for PrismaClient runtime via server/.env).
+//
+// After any change to this file, run:
+//   npm run db:generate --workspace=server   ← regenerates the TypeScript client
+//   npm run db:migrate --workspace=server    ← creates and applies a migration
+//
+// Docs: https://pris.ly/d/prisma-schema
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ─── Generator ───────────────────────────────────────────────────────────────
+// Instructs Prisma to generate the TypeScript client.
+// Output: server/prisma/generated/client/ (Prisma 7 default)
+// Import: import { PrismaClient } from '@prisma/client';
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+// ─── Datasource ──────────────────────────────────────────────────────────────
+// Declares the database type (PostgreSQL).
+// The connection URL is configured in prisma.config.ts (CLI) and read from
+// process.env.DATABASE_URL at runtime by PrismaClient.
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Models (Task 07) ────────────────────────────────────────────────────────
+// All business models are defined in Task 07 to keep concerns separate:
+//   - Task 06 (this file): Prisma installation, client generation, connection
+//   - Task 07: Full schema — User, Category, Supplier, Product, Purchase,
+//              PurchaseItem, Sale, SaleItem, ActivityLog, RefreshToken
+//
+// Naming conventions used throughout this schema (applied in Task 07):
+//   - Model names: PascalCase  (e.g. Product, PurchaseItem)
+//   - Table names: snake_case  via @@map (e.g. products, purchase_items)
+//   - Field names: camelCase   (e.g. createdAt, unitPrice)
+//   - Column names: snake_case via @map (e.g. created_at, unit_price)
+//   - Primary keys: UUID       via @default(uuid())
+//   - Money fields: Decimal    @db.Decimal(10, 2) — never Float

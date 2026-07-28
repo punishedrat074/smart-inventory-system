@@ -34,6 +34,9 @@ export default tseslint.config(
       '**/node_modules/**',
       '**/build/**',
       '.husky/**',
+      // Prisma 7 generates the TypeScript client to src/generated/.
+      // These are minified runtime files — never lint generated code.
+      'server/src/generated/**',
       // Don't lint config files themselves — they use special syntax
       // (e.g., __dirname in vite.config.ts, CJS require in some tools)
       'eslint.config.mjs',

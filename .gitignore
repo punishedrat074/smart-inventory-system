@@ -21,8 +21,11 @@ out/
 .env.production.local
 
 # ─── Prisma ───────────────────────────────────────────────────────────────────
-# Prisma generates client files — these are built, not source
+# Prisma generates client files — these are built, not source.
+# Prisma 7 changed the default output from node_modules to a local directory.
+# Both paths are ignored — always regenerate with: npm run db:generate --workspace=server
 server/node_modules/.prisma/
+server/src/generated/
 
 # ─── Logs ─────────────────────────────────────────────────────────────────────
 *.log
