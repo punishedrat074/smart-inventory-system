@@ -133,7 +133,9 @@
 
 ### Task 07 — Define full Prisma schema and run initial migration
 
-**Description:** Add all models to `schema.prisma`: User, Category, Supplier, Product, Purchase, PurchaseItem, Sale, SaleItem, ActivityLog, RefreshToken. Include enums, relations, and indexes. Run `prisma migrate dev`.
+**Status:** Complete — July 31, 2026.
+
+**Description:** Add all models to `schema.prisma`: User, Category, Supplier, Product, Purchase, PurchaseItem, Sale, SaleItem, InventoryTransaction, ActivityLog, RefreshToken. Include enums, relations, indexes, and the initial migration.
 
 | Field              | Value                                                        |
 | ------------------ | ------------------------------------------------------------ |
@@ -1153,7 +1155,7 @@
 Copy this checklist to track completion:
 
 ```
-Phase 0:  [ ] 01  [ ] 02  [ ] 03  [ ] 04  [ ] 05  [ ] 06  [ ] 07  [ ] 08
+Phase 0:  [x] 01  [x] 02  [x] 03  [x] 04  [x] 05  [x] 06  [x] 07  [ ] 08
 Phase 1:  [ ] 09  [ ] 10  [ ] 11  [ ] 12  [ ] 13  [ ] 14
 Phase 2:  [ ] 15  [ ] 16  [ ] 17  [ ] 18  [ ] 19  [ ] 20
 Phase 3:  [ ] 21  [ ] 22  [ ] 23  [ ] 24  [ ] 25  [ ] 26

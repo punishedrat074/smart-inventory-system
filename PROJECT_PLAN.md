@@ -1,7 +1,7 @@
 # Smart Inventory Management System — Implementation Plan
 
-> **Version:** 1.1  
-> **Last Updated:** July 24, 2026  
+> **Version:** 1.2
+> **Last Updated:** July 31, 2026
 > **Status:** Pre-development planning  
 > **Purpose:** Software engineering portfolio & resume showcase  
 > **Related docs:** [FEATURES.md](./FEATURES.md) · [TASKS.md](./TASKS.md)
@@ -365,6 +365,7 @@ User ──────────< ActivityLog
 
 Product ──> Category
 Product ──> Supplier (preferred/default supplier)
+Product ──< InventoryTransaction (immutable stock ledger)
 ```
 
 ### 3.2 Prisma Schema (Conceptual)
@@ -481,6 +482,22 @@ Product ──> Supplier (preferred/default supplier)
 | unitPrice | Decimal(10,2) | Price at time of sale |
 | subtotal  | Decimal(10,2) |                       |
 
+#### InventoryTransaction
+
+| Field           | Type                                                        | Notes                                   |
+| --------------- | ----------------------------------------------------------- | --------------------------------------- |
+| id              | UUID                                                        | PK                                      |
+| productId       | UUID                                                        | FK → Product                            |
+| transactionType | Enum (PURCHASE_RECEIPT, SALE_COMPLETION, MANUAL_ADJUSTMENT) | Why stock changed                       |
+| quantityDelta   | Int                                                         | Signed stock movement                   |
+| quantityBefore  | Int                                                         | Balance before the movement             |
+| quantityAfter   | Int                                                         | Balance after the movement              |
+| purchaseId      | UUID?                                                       | FK → Purchase for receipts              |
+| saleId          | UUID?                                                       | FK → Sale for completed sales           |
+| createdById     | UUID?                                                       | FK → User; actor for manual adjustments |
+| reason          | String?                                                     | Required for manual adjustments         |
+| createdAt       | DateTime                                                    | Indexed with product for stock history  |
+
 #### ActivityLog
 
 | Field      | Type     | Notes                                       |
@@ -516,6 +533,7 @@ CREATE INDEX idx_sales_created_at ON sales(created_at);
 CREATE INDEX idx_purchases_status ON purchases(status);
 CREATE INDEX idx_activity_logs_created_at ON activity_logs(created_at);
 CREATE INDEX idx_activity_logs_user ON activity_logs(user_id);
+CREATE INDEX idx_inventory_transactions_product_created_at ON inventory_transactions(product_id, created_at);
 ```
 
 ### 3.4 Seed Data

@@ -1,7 +1,7 @@
 # SIMS — Architecture Reference
 
-> **Version:** 1.3
-> **Last Updated:** Task 06 (Prisma 7 installation, adapter configuration, Neon connection verified)
+> **Version:** 1.4
+> **Last Updated:** Task 07 (production Prisma schema and initial Neon migration)
 > **Maintainer:** Update this document after every task that changes architecture, adds a new pattern, or introduces a new dependency.
 
 ---
@@ -628,8 +628,8 @@ const { canDelete } = usePermissions();
 
 ## 7. Database Layer
 
-> **Status:** Task 06 complete — Prisma 7 installed, client generated, Neon connection verified.
-> Schema models (Task 07) and seed data (Task 08) are not yet implemented.
+> **Status:** Task 07 complete — the production Prisma schema is migrated to Neon.
+> Seed data (Task 08) is the next database task.
 
 ### 7.1 Technology Stack
 
@@ -716,29 +716,36 @@ User ─────────────────────────
   │                     │
   │                     └──►── Supplier ◄────────────────────────────┘
   │                                                          (default supplier)
-  └── (creates) ──► Sale ────◄── SaleItem ──────────────►── Product
+  ├── (creates) ──► Sale ────◄── SaleItem ──────────────►── Product
+  └── (creates) ──► InventoryTransaction ───────────────►── Product
+                             │                    │
+                             └── Purchase? / Sale?
 ```
 
 ### 7.6 Core Models Summary
 
-> **Status:** Models are designed (see PROJECT_PLAN.md §3.2) — defined in code in Task 07.
+> **Status:** All models below are defined in `server/prisma/schema.prisma` and
+> applied through the Task 07 initial migration.
 
-| Model          | Key Fields                                                  | Notes                                                    |
-| -------------- | ----------------------------------------------------------- | -------------------------------------------------------- |
-| `User`         | id, email, passwordHash, role, isActive                     | `role`: ADMIN \| EMPLOYEE                                |
-| `Category`     | id, name, description                                       | Admin-managed                                            |
-| `Supplier`     | id, name, contactPerson, email, isActive                    | Soft delete via `isActive`                               |
-| `Product`      | id, sku, name, quantity, reorderLevel, costPrice, unitPrice | Central stock entity                                     |
-| `Purchase`     | id, purchaseNumber, status, supplierId                      | `PO-YYYY-NNNN`, status: DRAFT→ORDERED→RECEIVED→CANCELLED |
-| `PurchaseItem` | purchaseId, productId, quantity, unitCost, subtotal         | Line items                                               |
-| `Sale`         | id, saleNumber, status, totalAmount, completedAt            | `INV-YYYY-NNNN`, status: DRAFT→COMPLETED→CANCELLED       |
-| `SaleItem`     | saleId, productId, quantity, unitPrice, subtotal            | Line items                                               |
-| `ActivityLog`  | userId, action, entityType, entityId, metadata              | Full audit trail                                         |
-| `RefreshToken` | userId, token (hashed), expiresAt                           | Enables server-side logout/revocation                    |
+| Model                  | Key Fields                                                    | Notes                                                       |
+| ---------------------- | ------------------------------------------------------------- | ----------------------------------------------------------- |
+| `User`                 | id, email, passwordHash, role, isActive                       | `role`: ADMIN \| EMPLOYEE                                   |
+| `Category`             | id, name, description                                         | Admin-managed                                               |
+| `Supplier`             | id, name, contactPerson, email, isActive                      | Soft delete via `isActive`                                  |
+| `Product`              | id, sku, name, quantity, reorderLevel, costPrice, unitPrice   | Central stock entity                                        |
+| `Purchase`             | id, purchaseNumber, status, supplierId                        | `PO-YYYY-NNNN`, status: DRAFT→ORDERED→RECEIVED→CANCELLED    |
+| `PurchaseItem`         | purchaseId, productId, quantity, unitCost, subtotal           | Line items                                                  |
+| `Sale`                 | id, saleNumber, status, totalAmount, completedAt              | `INV-YYYY-NNNN`, status: DRAFT→COMPLETED→CANCELLED          |
+| `SaleItem`             | saleId, productId, quantity, unitPrice, subtotal              | Line items                                                  |
+| `InventoryTransaction` | productId, type, quantityDelta, quantityBefore, quantityAfter | Immutable stock ledger for receipts, sales, and adjustments |
+| `ActivityLog`          | userId, action, entityType, entityId, metadata                | Full audit trail                                            |
+| `RefreshToken`         | userId, token (hashed), expiresAt                             | Enables server-side logout/revocation                       |
 
 ### 7.7 Critical Stock Rules
 
-**Stock quantity is never set arbitrarily.** It changes in exactly two ways:
+**Stock quantity is never set arbitrarily.** Every stock change records an
+`InventoryTransaction` in the same database transaction as the product update.
+For MVP flows, it changes in exactly two ways:
 
 1. **Purchase → RECEIVED:** `prisma.$transaction([...])` increments each product's quantity.
 2. **Sale → COMPLETED:** `prisma.$transaction([...])` decrements — rejects if any product would go below 0.
@@ -960,5 +967,5 @@ must fix it manually before committing.
 
 ---
 
-_Last updated after: **Task 05** — Environment configuration and PostgreSQL setup_
-_Next update due after: **Task 06** — Prisma ORM installation_
+_Last updated after: **Task 07** — Prisma schema design and initial migration_
+_Next update due after: **Task 08** — Database seed data_
