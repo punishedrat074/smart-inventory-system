@@ -1155,7 +1155,7 @@
 Copy this checklist to track completion:
 
 ```
-Phase 0:  [x] 01  [x] 02  [x] 03  [x] 04  [x] 05  [x] 06  [x] 07  [ ] 08
+Phase 0:  [x] 01  [x] 02  [x] 03  [x] 04  [x] 05  [x] 06  [x] 07  [x] 08
 Phase 1:  [ ] 09  [ ] 10  [ ] 11  [ ] 12  [ ] 13  [ ] 14
 Phase 2:  [ ] 15  [ ] 16  [ ] 17  [ ] 18  [ ] 19  [ ] 20
 Phase 3:  [ ] 21  [ ] 22  [ ] 23  [ ] 24  [ ] 25  [ ] 26
