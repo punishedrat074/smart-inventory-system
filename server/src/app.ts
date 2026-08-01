@@ -6,7 +6,12 @@ import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 
 import { env } from './config/env';
+import {
+  globalErrorHandler,
+  notFoundHandler,
+} from './middleware/error.middleware';
 import { requestLogger } from './middleware/logger.middleware';
+import { sendSuccess } from './utils/apiResponse.util';
 
 const app: Application = express();
 
@@ -51,8 +56,6 @@ app.use(express.urlencoded({ extended: false }));
 // Parse Cookie headers into req.cookies. Required for session management.
 app.use(cookieParser());
 
-import { sendSuccess } from './utils/apiResponse.util';
-
 // ─── Routes ───────────────────────────────────────────────────────────────────
 // Temporary root route — confirms the API is reachable.
 // This will be replaced/complemented by versioned routers (e.g., /api/v1/...).
@@ -63,5 +66,12 @@ app.get('/', (_req: Request, res: Response) => {
     docs: '/api/v1',
   });
 });
+
+// ─── Error Handling ───────────────────────────────────────────────────────────
+// Catch all requests that don't match any route and forward a 404 AppError
+app.use(notFoundHandler);
+
+// Global Error Handler: Must be the last middleware in the application
+app.use(globalErrorHandler);
 
 export default app;
