@@ -46,26 +46,18 @@ const globalForPrisma = globalThis as unknown as {
 //   'error'  — Logs database connection failures and fatal Prisma errors.
 //              Always enabled in both environments.
 //
-function createPrismaClient(): PrismaClient {
-  const connectionString = process.env['DATABASE_URL'];
-  if (!connectionString) {
-    throw new Error(
-      'DATABASE_URL is not set. ' +
-        'Copy server/.env.example to server/.env and fill in your Neon connection string.',
-    );
-  }
+import { env } from './env';
 
+function createPrismaClient(): PrismaClient {
   // PrismaPg uses the `pg` driver under the hood, which manages an internal
   // connection pool. Pool configuration (size, timeouts) can be added here
   // in Task 07+ once connection behaviour under load is known.
-  const adapter = new PrismaPg({ connectionString });
+  const adapter = new PrismaPg({ connectionString: env.DATABASE_URL });
 
   return new PrismaClient({
     adapter,
     log:
-      process.env['NODE_ENV'] === 'development'
-        ? ['query', 'error', 'warn']
-        : ['error'],
+      env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
   });
 }
 
@@ -76,6 +68,6 @@ function createPrismaClient(): PrismaClient {
 //
 export const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
-if (process.env['NODE_ENV'] !== 'production') {
+if (env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = prisma;
 }

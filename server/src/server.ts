@@ -1,28 +1,11 @@
-// Load environment variables from .env before anything else.
-// This must be the first import so all subsequent modules see process.env populated.
-// In Task 09, this will be replaced by Zod-validated config (config/env.ts).
-import 'dotenv/config';
-
+// ─── Environment Configuration ──────────────────────────────────────────────────
+// Load and validate all environment variables before doing anything else.
+// If any required variables are missing or invalid, this will log the errors
+// and exit the process immediately (fail fast).
 import http from 'http';
 
 import app from './app';
-
-// ─── Configuration ────────────────────────────────────────────────────────────
-const rawPort = parseInt(process.env['PORT'] ?? '5000', 10);
-
-// Fail fast if PORT is set to a non-numeric value (e.g. PORT=abc).
-// Zod-validated config (Task 09) will make this guard unnecessary, but for now
-// this prevents a silent NaN that causes listen() to throw EINVAL at runtime.
-if (isNaN(rawPort) || rawPort < 1 || rawPort > 65535) {
-  console.error(
-    `[server] Invalid PORT value: "${process.env['PORT']}". Must be a number between 1–65535.`,
-  );
-  process.exit(1);
-}
-
-const PORT = rawPort;
-const HOST = process.env['HOST'] ?? '0.0.0.0';
-const NODE_ENV = process.env['NODE_ENV'] ?? 'development';
+import { env } from './config/env';
 
 // ─── HTTP Server ──────────────────────────────────────────────────────────────
 // Wrap the Express app in Node's built-in http.Server so we have a reference
@@ -30,9 +13,9 @@ const NODE_ENV = process.env['NODE_ENV'] ?? 'development';
 // of app.listen(), which is the same thing but less explicit.
 const server = http.createServer(app);
 
-server.listen(PORT, HOST, () => {
-  console.log(`[server] Running in ${NODE_ENV} mode`);
-  console.log(`[server] Listening on http://${HOST}:${PORT}`);
+server.listen(env.PORT, env.HOST, () => {
+  console.log(`[server] Running in ${env.NODE_ENV} mode`);
+  console.log(`[server] Listening on http://${env.HOST}:${env.PORT}`);
 });
 
 // ─── Graceful Shutdown ────────────────────────────────────────────────────────
