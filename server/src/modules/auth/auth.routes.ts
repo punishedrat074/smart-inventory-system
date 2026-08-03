@@ -1,5 +1,6 @@
 import { Router } from 'express';
 
+import { authenticate } from '../../middleware/auth.middleware';
 import { validate } from '../../middleware/validate.middleware';
 import {
   changePasswordHandler,
@@ -29,12 +30,13 @@ router.post('/refresh', refreshHandler);
 // POST /api/v1/auth/logout   — no body validation; token comes from cookie
 router.post('/logout', logoutHandler);
 
-// GET /api/v1/auth/me        — protected (Task 18 will add authenticate middleware)
-router.get('/me', getMeHandler);
+// GET /api/v1/auth/me        — protected: valid access token required
+router.get('/me', authenticate, getMeHandler);
 
-// PATCH /api/v1/auth/password — protected (Task 18 will add authenticate middleware)
+// PATCH /api/v1/auth/password — protected: valid access token required
 router.patch(
   '/password',
+  authenticate,
   validate(changePasswordSchema),
   changePasswordHandler,
 );

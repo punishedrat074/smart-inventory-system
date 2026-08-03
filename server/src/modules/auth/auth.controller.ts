@@ -159,8 +159,7 @@ export const logoutHandler = async (
 /**
  * GET /api/v1/auth/me
  * Returns the profile of the currently authenticated user.
- * Protected: requires a valid access token (Task 18 middleware will populate req.user).
- * Placeholder until Task 18 adds the authenticate middleware.
+ * Protected: authenticate middleware guarantees req.user is populated.
  */
 export const getMeHandler = async (
   req: Request,
@@ -168,17 +167,8 @@ export const getMeHandler = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    // req.user will be populated by the authenticate middleware (Task 18).
-    // For now, we read the user ID from the Authorization header directly so
-    // the route exists and can be verified before Task 18 is built.
-    const userId = (req as Request & { user?: { id: string } }).user?.id;
-    if (!userId) {
-      res
-        .status(401)
-        .json({ success: false, error: { message: 'Unauthorized' } });
-      return;
-    }
-    const user = await authService.getMe(userId);
+    // req.user is populated by the authenticate middleware before this handler runs.
+    const user = await authService.getMe(req.user!.id);
     sendSuccess(res, { user });
   } catch (err) {
     next(err);
@@ -188,7 +178,7 @@ export const getMeHandler = async (
 /**
  * PATCH /api/v1/auth/password
  * Changes the current user's password and invalidates all other sessions.
- * Protected: requires a valid access token (Task 18 middleware will populate req.user).
+ * Protected: authenticate middleware guarantees req.user is populated.
  */
 export const changePasswordHandler = async (
   req: Request<object, object, ChangePasswordInput>,
@@ -196,14 +186,8 @@ export const changePasswordHandler = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = (req as Request & { user?: { id: string } }).user?.id;
-    if (!userId) {
-      res
-        .status(401)
-        .json({ success: false, error: { message: 'Unauthorized' } });
-      return;
-    }
-    await authService.changePassword(userId, req.body);
+    // req.user is populated by the authenticate middleware before this handler runs.
+    await authService.changePassword(req.user!.id, req.body);
     clearRefreshCookie(res);
     sendSuccess(res, {
       message: 'Password changed successfully. Please log in again.',
