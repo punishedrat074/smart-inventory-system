@@ -11,6 +11,8 @@ import {
   notFoundHandler,
 } from './middleware/error.middleware';
 import { requestLogger } from './middleware/logger.middleware';
+import authRouter from './modules/auth/auth.routes';
+import healthRouter from './routes/health.route';
 import { sendSuccess } from './utils/apiResponse.util';
 
 const app: Application = express();
@@ -56,11 +58,8 @@ app.use(express.urlencoded({ extended: false }));
 // Parse Cookie headers into req.cookies. Required for session management.
 app.use(cookieParser());
 
-import healthRouter from './routes/health.route';
-
 // ─── Routes ───────────────────────────────────────────────────────────────────
-// Temporary root route — confirms the API is reachable.
-// This will be replaced/complemented by versioned routers (e.g., /api/v1/...).
+// Root route — confirms the API is reachable.
 app.get('/', (_req: Request, res: Response) => {
   sendSuccess(res, {
     message: 'Smart Inventory Management System API',
@@ -71,6 +70,7 @@ app.get('/', (_req: Request, res: Response) => {
 
 // API v1 Routes
 app.use('/api/v1', healthRouter);
+app.use('/api/v1/auth', authRouter);
 
 // ─── Error Handling ───────────────────────────────────────────────────────────
 // Catch all requests that don't match any route and forward a 404 AppError
