@@ -12,6 +12,7 @@ import {
 } from './middleware/error.middleware';
 import { requestLogger } from './middleware/logger.middleware';
 import authRouter from './modules/auth/auth.routes';
+import usersRouter from './modules/users/users.routes';
 import healthRouter from './routes/health.route';
 import { sendSuccess } from './utils/apiResponse.util';
 
@@ -71,6 +72,7 @@ app.get('/', (_req: Request, res: Response) => {
 // API v1 Routes
 app.use('/api/v1', healthRouter);
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/users', usersRouter);
 
 // ─── Error Handling ───────────────────────────────────────────────────────────
 // Catch all requests that don't match any route and forward a 404 AppError
