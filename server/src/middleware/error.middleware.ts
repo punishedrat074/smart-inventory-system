@@ -43,10 +43,9 @@ export const globalErrorHandler = (
 
   // 2. ZodError (Validation errors from request payloads)
   if (err instanceof ZodError) {
-    const zodErr = err as unknown as { errors: ZodIssue[] };
-    const formattedErrors = zodErr.errors.map((e: ZodIssue) => ({
-      field: e.path.join('.'),
-      message: e.message,
+    const formattedErrors = err.issues.map((issue: ZodIssue) => ({
+      field: issue.path.join('.'),
+      message: issue.message,
     }));
     sendError(res, 'Validation failed', 400, formattedErrors);
     return;
