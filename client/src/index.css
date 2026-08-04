@@ -1,46 +1,151 @@
 /*
  * index.css — Global stylesheet entry point
  *
- * Current state: minimal reset only.
+ * Structure:
+ *   1. Font import (Inter, JetBrains Mono from Google Fonts)
+ *   2. Tailwind directives
+ *   3. CSS custom properties — dark mode first (root = dark), .light = light variant
+ *   4. Global base styles that extend Tailwind's base layer
  *
- * In Task 21, this file will be expanded to include:
- *   - Tailwind CSS directives (@tailwind base, components, utilities)
- *   - CSS custom properties for the design system (colors, radius, spacing)
- *   - Dark mode variables (:root and .dark class)
- *   - Font imports (Inter, JetBrains Mono)
- *
- * Do not add feature-specific styles here. Component styles belong in
- * component files (via Tailwind utilities) or shadcn/ui CSS variables.
+ * Design philosophy:
+ *   - Dark mode is the default. The .light class overrides to light values.
+ *   - All colours use the HSL format WITHOUT the hsl() wrapper.
+ *     This allows Tailwind to inject opacity modifiers: bg-primary/50
+ *   - All semantic tokens map to this file. No hard-coded colours in components.
  */
 
-/* ─── Box Model Reset ──────────────────────────────────────────────────────── */
+/* ─── 1. Fonts ──────────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ─── 2. Tailwind Directives ────────────────────────────────────────────────── */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── 3. CSS Custom Properties ──────────────────────────────────────────────── */
 /*
- * Border-box sizing means width/height include padding and border.
- * This is the foundation of every modern CSS reset — without it, padding
- * adds to element dimensions in unexpected ways.
+ * Root = DARK MODE (default experience).
+ * All values are in HSL format without the hsl() wrapper:
+ *   --background: 240 10% 3.9%   → used as bg-background
+ *   Tailwind can then produce bg-background/80 (80% opacity) automatically.
+ *
+ * Design inspiration: Vercel Dashboard, Linear, Clerk
  */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+@layer base {
+  :root {
+    /* ── Surfaces ── */
+    --background: 240 10% 3.9%; /* near-black, site background      */
+    --foreground: 0 0% 98%; /* near-white, default text          */
 
-/* ─── Root Defaults ────────────────────────────────────────────────────────── */
-html {
-  /* Prevents font size from scaling with browser zoom on iOS Safari */
-  -webkit-text-size-adjust: 100%;
-}
+    --card: 240 10% 6%; /* slightly lifted above background  */
+    --card-foreground: 0 0% 98%;
 
-body {
-  margin: 0;
-  /* System font stack — replaced by Inter (Task 21) once Tailwind is configured */
-  font-family:
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    sans-serif;
-  /* Improves font rendering on macOS/iOS */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    --popover: 240 10% 5%;
+    --popover-foreground: 0 0% 98%;
+
+    /* ── Brand / Primary ── */
+    /* Clean white primary — inspired by Vercel's button style */
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%; /* dark text on white button         */
+
+    /* ── Secondary ── */
+    --secondary: 240 3.7% 15.9%; /* subtle dark surface for chips     */
+    --secondary-foreground: 0 0% 98%;
+
+    /* ── Muted ── */
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%; /* caption / helper text             */
+
+    /* ── Accent ── */
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+
+    /* ── Destructive ── */
+    --destructive: 0 72% 51%; /* red — delete, error states        */
+    --destructive-foreground: 0 0% 98%;
+
+    /* ── Borders & Inputs ── */
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%; /* focus ring                        */
+
+    /* ── Status Colours ── */
+    --success: 142 71% 45%; /* green — active, completed         */
+    --success-foreground: 0 0% 98%;
+    --warning: 38 92% 50%; /* amber — low stock, pending        */
+    --warning-foreground: 240 5.9% 10%;
+    --danger: 0 72% 51%; /* red — destructive actions         */
+    --danger-foreground: 0 0% 98%;
+
+    /* ── Border Radius ── */
+    /* Single token — change this to restyle the entire app's corner radius */
+    --radius: 0.5rem;
+  }
+
+  /*
+   * Light mode overrides.
+   * Applied when the <html> element has the class "light".
+   * Toggling via JS: document.documentElement.classList.toggle('light')
+   */
+  .light {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 98%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 240 5.9% 10%;
+    --danger: 0 72% 51%;
+    --danger-foreground: 0 0% 98%;
+  }
+
+  /* ─── 4. Global Base Styles ──────────────────────────────────────────────── */
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    /* Enable smooth scrolling for anchor navigation */
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Prevent layout shift caused by scrollbar appearing/disappearing */
+    overflow-y: scroll;
+  }
+
+  /* Focus ring — accessible keyboard navigation indicator */
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
 }

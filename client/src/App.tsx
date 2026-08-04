@@ -1,46 +1,69 @@
-import type { CSSProperties } from 'react';
-
 /**
- * The scaffold state communicates clearly to the developer that the project
- * is in early setup, while providing links to verify that both the frontend
- * and backend are running correctly.
+ * App.tsx — Task 21 verification component
  *
- * No Tailwind, no shadcn — those are Task 21 and 22.
- * Inline styles are intentional and temporary.
+ * Replaces the Task 03 inline-styles scaffold with Tailwind utility classes.
+ * This component is intentionally simple — its only purpose is to confirm that:
+ *   - Tailwind directives are working (@tailwind base/components/utilities)
+ *   - CSS custom properties are resolving (bg-background, text-foreground, etc.)
+ *   - The Inter font is loading from Google Fonts
+ *   - Dark mode is the default (no .light class on <html>)
+ *
+ * This component will be replaced in Task 28 (AppShell) with the real layout.
  */
 function App() {
   return (
-    <div style={styles.root}>
-      <div style={styles.card}>
-        <div style={styles.badge}>Task 03 — Scaffold complete</div>
-        <h1 style={styles.heading}>Smart Inventory Management System</h1>
-        <p style={styles.subheading}>
-          Vite + React 18 + TypeScript is running.
-        </p>
+    <div className="min-h-screen bg-background flex items-center justify-center p-6">
+      <div className="w-full max-w-sm bg-card border border-border rounded-lg p-8 space-y-5">
+        {/* Status badge */}
+        <div className="inline-flex items-center gap-1.5 bg-success/10 text-success text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded-md">
+          <span className="w-1.5 h-1.5 rounded-full bg-success" />
+          Task 21 — Tailwind configured
+        </div>
 
-        <div style={styles.divider} />
+        {/* Heading */}
+        <div className="space-y-1">
+          <h1 className="text-lg font-semibold text-foreground tracking-tight">
+            Smart Inventory Management System
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Tailwind CSS + design tokens are active.
+          </p>
+        </div>
 
-        <ul style={styles.checklist}>
-          <li>✅ Vite dev server (port 5173)</li>
-          <li>✅ React 18 + StrictMode</li>
-          <li>✅ TypeScript strict mode</li>
-          <li>✅ HMR — edit this file and the page updates instantly</li>
-          <li>✅ @ path alias configured</li>
-          <li>✅ /api proxy → Express on port 5000</li>
+        {/* Divider */}
+        <div className="border-t border-border" />
+
+        {/* Token verification list */}
+        <ul className="space-y-2 text-sm text-muted-foreground">
+          {[
+            'Tailwind utilities (bg-background, text-foreground)',
+            'CSS variables resolved (HSL design tokens)',
+            'Inter font loading from Google Fonts',
+            'Dark mode default — .light class for light variant',
+            'Border radius token (--radius)',
+            'Success / warning / danger status colours',
+          ].map((item) => (
+            <li key={item} className="flex items-start gap-2">
+              <span className="text-success mt-0.5 shrink-0">✓</span>
+              {item}
+            </li>
+          ))}
         </ul>
 
-        <div style={styles.divider} />
+        {/* Divider */}
+        <div className="border-t border-border" />
 
-        <p style={styles.caption}>
-          Coming next: Tailwind (Task 21) · shadcn/ui (Task 22) · React Router
-          (Task 27) · AppShell (Task 28)
+        {/* Footer note */}
+        <p className="text-xs text-muted-foreground/60">
+          Next: shadcn/ui primitives (Task 22) · Axios client (Task 23)
         </p>
 
+        {/* API server link */}
         <a
           href="http://localhost:5000"
           target="_blank"
           rel="noreferrer"
-          style={styles.link}
+          className="inline-block text-sm text-primary hover:text-primary/80 transition-colors duration-150"
         >
           Verify API server →
         </a>
@@ -50,76 +73,3 @@ function App() {
 }
 
 export default App;
-
-// ─── Temporary inline styles ──────────────────────────────────────────────────
-// These are replaced entirely when Tailwind is added in Task 21.
-// Using a style object (not a <style> tag) keeps the file self-contained
-// and avoids polluting the global CSS namespace during the scaffold phase.
-const styles = {
-  root: {
-    minHeight: '100vh',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    background: '#09090b',
-    padding: '1.5rem',
-  },
-  card: {
-    background: '#18181b',
-    border: '1px solid #27272a',
-    borderRadius: '12px',
-    padding: '2rem',
-    maxWidth: '480px',
-    width: '100%',
-  },
-  badge: {
-    display: 'inline-block',
-    background: '#052e16',
-    color: '#4ade80',
-    fontSize: '0.7rem',
-    fontWeight: 600,
-    letterSpacing: '0.05em',
-    textTransform: 'uppercase' as const,
-    padding: '0.25rem 0.625rem',
-    borderRadius: '6px',
-    marginBottom: '1rem',
-  },
-  heading: {
-    margin: '0 0 0.5rem',
-    fontSize: '1.25rem',
-    fontWeight: 600,
-    color: '#fafafa',
-  },
-  subheading: {
-    margin: 0,
-    fontSize: '0.875rem',
-    color: '#a1a1aa',
-  },
-  divider: {
-    height: '1px',
-    background: '#27272a',
-    margin: '1.25rem 0',
-  },
-  checklist: {
-    listStyle: 'none',
-    padding: 0,
-    margin: 0,
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: '0.5rem',
-    fontSize: '0.875rem',
-    color: '#a1a1aa',
-  },
-  caption: {
-    fontSize: '0.75rem',
-    color: '#52525b',
-    margin: 0,
-  },
-  link: {
-    display: 'inline-block',
-    marginTop: '1rem',
-    fontSize: '0.875rem',
-    color: '#0070f3',
-    textDecoration: 'none',
-  },
-} satisfies Record<string, CSSProperties>;
