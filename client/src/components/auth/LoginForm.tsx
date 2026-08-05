@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, Loader2, Lock, Mail } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -27,7 +28,7 @@ interface LoginFormProps {
  * LoginForm.tsx — User login form component
  *
  * Provides real-time Zod validation, password visibility toggles, loading indicators,
- * and integration with the Zustand auth store (Task 25).
+ * post-login location redirection, and integration with the Zustand auth store (Task 25).
  */
 export const LoginForm = ({
   onSuccess,
@@ -35,6 +36,8 @@ export const LoginForm = ({
 }: LoginFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const { login, isLoading } = useAuthStore();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const {
     register,
@@ -54,7 +57,15 @@ export const LoginForm = ({
     try {
       const user = await login(values);
       toast.success(`Welcome back, ${user.firstName}!`);
-      if (onSuccess) onSuccess();
+
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        // Redirect to intended destination if redirected from ProtectedRoute, else /dashboard
+        const fromLocation = (location.state as { from?: { pathname: string } })
+          ?.from?.pathname;
+        navigate(fromLocation || '/dashboard', { replace: true });
+      }
     } catch (err) {
       const apiError = err as { message?: string };
       const errorMessage = apiError.message || 'Invalid email or password';
@@ -186,7 +197,13 @@ export const LoginForm = ({
         Don&apos;t have an account?{' '}
         <button
           type="button"
-          onClick={onNavigateToRegister}
+          onClick={() => {
+            if (onNavigateToRegister) {
+              onNavigateToRegister();
+            } else {
+              navigate('/register');
+            }
+          }}
           className="text-primary hover:underline font-medium"
         >
           Create an account

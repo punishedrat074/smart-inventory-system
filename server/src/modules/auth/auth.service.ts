@@ -150,8 +150,8 @@ export const refresh = async (rawRefreshToken: string) => {
     throw new AppError('User not found or deactivated', 401);
   }
 
-  // 4. Rotate: delete old token record, issue new pair
-  await prisma.refreshToken.delete({ where: { tokenHash } });
+  // 4. Rotate: delete old token record, issue new pair (deleteMany avoids throwing on concurrent calls)
+  await prisma.refreshToken.deleteMany({ where: { tokenHash } });
 
   const newAccessToken = signAccessToken({ sub: user.id, role: user.role });
   const newRefreshToken = signRefreshToken({ sub: user.id });

@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, Loader2, Lock, Mail, User } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -50,6 +51,7 @@ export const RegisterForm = ({
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { register: registerUser, isLoading } = useAuthStore();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -76,7 +78,12 @@ export const RegisterForm = ({
         password: values.password,
       });
       toast.success(`Account created! Welcome, ${user.firstName}.`);
-      if (onSuccess) onSuccess();
+
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        navigate('/dashboard', { replace: true });
+      }
     } catch (err) {
       const apiError = err as { message?: string };
       const errorMessage = apiError.message || 'Registration failed';
@@ -256,7 +263,13 @@ export const RegisterForm = ({
         Already have an account?{' '}
         <button
           type="button"
-          onClick={onNavigateToLogin}
+          onClick={() => {
+            if (onNavigateToLogin) {
+              onNavigateToLogin();
+            } else {
+              navigate('/login');
+            }
+          }}
           className="text-primary hover:underline font-medium"
         >
           Sign in

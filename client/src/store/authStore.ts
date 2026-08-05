@@ -12,15 +12,11 @@ import { queryClient } from '@/lib/queryClient';
 import type { AuthUser, LoginInput, RegisterInput } from '@/types/auth.types';
 
 /**
- * authStore.ts — Centralized Zustand Authentication Store
- *
- * Manages client-side user session state, token synchronization with the Axios
- * HTTP client (api/client.ts), and query cache cleanup on logout.
- *
- * Security Model:
- *   - Access tokens stay in-memory (`client.ts` module state via `setAccessToken`).
- *   - Refresh tokens are stored in HttpOnly cookies managed automatically by the server.
+ * Single-flight promise lock for initAuth.
+ * Prevents concurrent session restoration calls (e.g. React 18 StrictMode double-mount)
+ * from sending duplicate refresh requests with the same HttpOnly cookie.
  */
+let initAuthPromise: Promise<void> | null = null;
 
 interface AuthState {
   user: AuthUser | null;
@@ -120,23 +116,32 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   /**
    * Restores session on app startup via refresh cookie.
-   * Runs once on application mount.
+   * Single-flight execution prevents duplicate refresh attempts during page loads.
    */
   initAuth: async () => {
-    set({ isInitializing: true });
-    try {
-      // 1. Attempt token refresh using the HttpOnly cookie
-      const refreshRes = await refreshApi();
-      const accessToken = refreshRes.data.accessToken;
-      setAccessToken(accessToken);
+    if (get().isAuthenticated) return;
+    if (initAuthPromise) return initAuthPromise;
 
-      // 2. Fetch authenticated user profile using the new access token
-      const meRes = await getMeApi();
-      get().setAuth(meRes.data.user, accessToken);
-    } catch {
-      // If refresh or getMe fails (no cookie / expired session), finish initialization unauthenticated
-      get().clearAuth();
-    }
+    initAuthPromise = (async () => {
+      set({ isInitializing: true });
+      try {
+        // 1. Attempt token refresh using the HttpOnly cookie
+        const refreshRes = await refreshApi();
+        const accessToken = refreshRes.data.accessToken;
+        setAccessToken(accessToken);
+
+        // 2. Fetch authenticated user profile using the new access token
+        const meRes = await getMeApi();
+        get().setAuth(meRes.data.user, accessToken);
+      } catch {
+        // If refresh or getMe fails (no cookie / expired session), finish initialization unauthenticated
+        get().clearAuth();
+      } finally {
+        initAuthPromise = null;
+      }
+    })();
+
+    return initAuthPromise;
   },
 }));
 

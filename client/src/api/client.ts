@@ -108,13 +108,16 @@ apiClient.interceptors.response.use(
       _retried?: boolean;
     };
 
-    // Only attempt refresh for 401 errors that haven't been retried yet.
-    // Skip refresh if the failing request IS the refresh call itself.
+    // Only attempt refresh for 401 errors on protected endpoints that haven't been retried yet.
+    // Skip refresh if the failing request is a login, register, or refresh endpoint.
     const is401 = error.response?.status === 401;
-    const isRefreshEndpoint = originalRequest.url?.includes('/auth/refresh');
+    const isAuthEndpoint =
+      originalRequest.url?.includes('/auth/login') ||
+      originalRequest.url?.includes('/auth/register') ||
+      originalRequest.url?.includes('/auth/refresh');
     const alreadyRetried = originalRequest._retried === true;
 
-    if (!is401 || isRefreshEndpoint || alreadyRetried) {
+    if (!is401 || isAuthEndpoint || alreadyRetried) {
       return Promise.reject(normaliseError(error));
     }
 
