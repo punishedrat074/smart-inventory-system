@@ -2,7 +2,6 @@ import {
   Check,
   ChevronDown,
   LogOut,
-  Menu,
   Monitor,
   Moon,
   Settings,
@@ -10,11 +9,10 @@ import {
   Sun,
   User as UserIcon,
 } from 'lucide-react';
-import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
-import { Sidebar } from '@/components/layout/Sidebar';
+import { MobileNav } from '@/components/layout/MobileNav';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -25,7 +23,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useTheme } from '@/hooks/useTheme';
 import { useAuthStore } from '@/store/authStore';
 
@@ -59,14 +56,13 @@ const getPageTitle = (pathname: string): string => {
  * Header.tsx — Main application top navigation bar
  *
  * Features:
- *   - Mobile menu sheet drawer trigger
+ *   - MobileNav drawer trigger integration
  *   - Current page title / location breadcrumb
  *   - Light/Dark/System theme selector dropdown
  *   - API connection status badge
  *   - User profile dropdown menu with role badge and logout action
  */
 export const Header = () => {
-  const [mobileOpen, setMobileOpen] = useState(false);
   const { user, logout } = useAuthStore();
   const { theme, resolvedTheme, setTheme } = useTheme();
   const location = useLocation();
@@ -88,25 +84,8 @@ export const Header = () => {
     <header className="h-16 border-b border-border bg-card/50 backdrop-blur px-4 lg:px-6 flex items-center justify-between sticky top-0 z-30 select-none">
       {/* Left: Mobile Drawer & Current Page Title */}
       <div className="flex items-center gap-3">
-        {/* Mobile Navigation Sheet Drawer */}
-        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-          <SheetTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="lg:hidden text-muted-foreground hover:text-foreground"
-              aria-label="Toggle navigation menu"
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent
-            side="left"
-            className="p-0 w-64 bg-card border-r border-border"
-          >
-            <Sidebar onItemClick={() => setMobileOpen(false)} />
-          </SheetContent>
-        </Sheet>
+        {/* Mobile Navigation Drawer Trigger */}
+        <MobileNav />
 
         {/* Page Title / Breadcrumb */}
         <div>
