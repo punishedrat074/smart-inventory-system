@@ -130,6 +130,37 @@
     box-sizing: border-box;
   }
 
+  /*
+   * Global theme transition — fires whenever the .light or .dark class
+   * is toggled on <html>. Every element that uses a CSS variable for its
+   * background, text, or border colour will animate simultaneously at 200ms,
+   * preventing the split-second stagger between sidebar and main content.
+   *
+   * We exclude elements that have their own animation (e.g. spinners, progress
+   * bars) using :not() selectors to prevent unintended slowdowns.
+   */
+  html.light *,
+  html.dark *,
+  html *,
+  :root * {
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-duration: 100ms;
+    transition-timing-function: ease;
+  }
+
+  /*
+   * Suppress the transition on elements where it would interfere:
+   * – SVG paths/shapes that rely on animated fill
+   * – animated spinners / loaders
+   * – cursor / pointer
+   * Note: transition-all on Sidebar only needs to cover width, not color,
+   * since the global rule above handles color uniformly.
+   */
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
   html {
     -webkit-text-size-adjust: 100%;
     /* Enable smooth scrolling for anchor navigation */

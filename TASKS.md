@@ -608,6 +608,8 @@
 
 ### Task 32 — Add NotFound page and utility formatters
 
+**Status:** Complete — August 5, 2026.
+
 **Description:** Create 404 page and utility functions for currency, date, and number formatting.
 
 | Field              | Value                                                                                                  |
@@ -619,8 +621,8 @@
 
 **Acceptance Criteria:**
 
-- [ ] Unknown routes render 404 page with link home
-- [ ] `formatCurrency(1234.5)` returns locale-formatted string
+- [x] Unknown routes render 404 page with link home
+- [x] `formatCurrency(1234.5)` returns locale-formatted string
 
 ---
 

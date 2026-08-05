@@ -1,7 +1,6 @@
 import {
   AlertCircle,
   FolderTree,
-  LayoutDashboard,
   LogOut,
   Package,
   Plus,
@@ -28,6 +27,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useDebounce } from '@/hooks/useDebounce';
 import { LoginPage } from '@/pages/auth/LoginPage';
 import { RegisterPage } from '@/pages/auth/RegisterPage';
+import { NotFoundPage } from '@/pages/NotFoundPage';
 import { ProtectedRoute } from '@/routes/ProtectedRoute';
 import { PublicRoute } from '@/routes/PublicRoute';
 import { useAuthStore } from '@/store/authStore';
@@ -510,33 +510,7 @@ const GenericPlaceholder = ({
   </div>
 );
 
-// ─── Catch-All 404 Not Found View ─────────────────────────────────────────────
-const NotFoundPage = () => {
-  const navigate = useNavigate();
-
-  return (
-    <div className="min-h-screen bg-background p-6 font-sans flex flex-col items-center justify-center text-center">
-      <div className="space-y-4 max-w-sm">
-        <div className="h-14 w-14 rounded-full bg-destructive/10 text-destructive flex items-center justify-center mx-auto">
-          <AlertCircle className="h-7 w-7" />
-        </div>
-        <h1 className="text-3xl font-extrabold text-foreground tracking-tight">
-          404
-        </h1>
-        <h2 className="text-lg font-semibold text-foreground">
-          Page Not Found
-        </h2>
-        <p className="text-sm text-muted-foreground">
-          The page you are looking for does not exist or has been moved.
-        </p>
-        <Button onClick={() => navigate('/dashboard')} className="w-full">
-          <LayoutDashboard className="mr-2 h-4 w-4" />
-          Return to Dashboard
-        </Button>
-      </div>
-    </div>
-  );
-};
+// NotFoundPage is now a dedicated component at src/pages/NotFoundPage.tsx
 
 // ─── Centralized App Routing Tree ─────────────────────────────────────────────
 export const AppRoutes = () => {
