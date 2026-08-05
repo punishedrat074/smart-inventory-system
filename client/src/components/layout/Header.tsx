@@ -1,9 +1,13 @@
 import {
+  Check,
   ChevronDown,
   LogOut,
   Menu,
+  Monitor,
+  Moon,
   Settings,
   Shield,
+  Sun,
   User as UserIcon,
 } from 'lucide-react';
 import { useState } from 'react';
@@ -22,6 +26,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { useTheme } from '@/hooks/useTheme';
 import { useAuthStore } from '@/store/authStore';
 
 /** Helper to generate page title from current pathname */
@@ -56,12 +61,14 @@ const getPageTitle = (pathname: string): string => {
  * Features:
  *   - Mobile menu sheet drawer trigger
  *   - Current page title / location breadcrumb
+ *   - Light/Dark/System theme selector dropdown
  *   - API connection status badge
  *   - User profile dropdown menu with role badge and logout action
  */
 export const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user, logout } = useAuthStore();
+  const { theme, resolvedTheme, setTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -109,8 +116,68 @@ export const Header = () => {
         </div>
       </div>
 
-      {/* Right: API Status & User Dropdown */}
-      <div className="flex items-center gap-3">
+      {/* Right: Theme Toggle, API Status & User Dropdown */}
+      <div className="flex items-center gap-2 sm:gap-3">
+        {/* Theme Selector Dropdown Menu */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 text-muted-foreground hover:text-foreground"
+              aria-label="Select theme"
+            >
+              {resolvedTheme === 'dark' ? (
+                <Moon className="h-4 w-4 text-primary" />
+              ) : (
+                <Sun className="h-4 w-4 text-amber-500" />
+              )}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-36">
+            <DropdownMenuLabel className="text-xs text-muted-foreground">
+              Theme Mode
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => setTheme('light')}
+              className="flex items-center justify-between"
+            >
+              <div className="flex items-center gap-2">
+                <Sun className="h-4 w-4 text-amber-500" />
+                <span>Light</span>
+              </div>
+              {theme === 'light' && (
+                <Check className="h-3.5 w-3.5 text-primary" />
+              )}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setTheme('dark')}
+              className="flex items-center justify-between"
+            >
+              <div className="flex items-center gap-2">
+                <Moon className="h-4 w-4 text-primary" />
+                <span>Dark</span>
+              </div>
+              {theme === 'dark' && (
+                <Check className="h-3.5 w-3.5 text-primary" />
+              )}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setTheme('system')}
+              className="flex items-center justify-between"
+            >
+              <div className="flex items-center gap-2">
+                <Monitor className="h-4 w-4 text-muted-foreground" />
+                <span>System</span>
+              </div>
+              {theme === 'system' && (
+                <Check className="h-3.5 w-3.5 text-primary" />
+              )}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
         {/* API Connection Indicator (Desktop) */}
         <div className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-full bg-secondary/60 text-muted-foreground text-xs font-mono">
           <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
